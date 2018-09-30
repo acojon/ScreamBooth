@@ -11,8 +11,6 @@ In 2017, the hardware dongle failed, whenever it was plugged into the camera, th
 
 I've setup this GitHub repository to share the code, the PCB files, photos, etc. so that if you too would like to setup your own sound powered camera trigger, you can use these resources to help get your own setup.
 
-![CannonPinout](./CanonPinout.png) is correct
-
 ## Parts List
 
 * 1 x [Adafruit Trinket M0](https://www.adafruit.com/product/3500)
@@ -38,3 +36,35 @@ Optional Parts:
 * Connector for Shutter Release cable to Project box (I used a 3.5mm headphone jack and plug)
 * Project Box
 * Momentary switch to use as reset button
+
+## How does it work
+
+The Scream Booth works by using a microphone to listen to the current sound in the room.  The output is run into a micro controller.  In this case I'm using an Adafruit Trinket M0, but just about any micro controller should work. The micro controller compares the current sound level to a threshold value.  The threshold value is set by the 10k potentiometer. If the current sound level is higher than the threshold level, the micro controller sets the LED and Camera PINS to HIGH for 500 milliseconds (1/2 a second.) This turns on the transistor, which turns on the relay.  The relay connects the camera's ground and "Full Press" pins together which triggers the shutter on the camera.
+
+### Things I learned picking a microphone breakout board
+
+The most important thing I learned while testing microphone breakout boards was to test the microphone and see if there is a "loud noise" cutout.  If the microphone mutes the output (or does some clever filtering to keep the loud noise from appearing in the output) then this microphone isn't going to work for the Scream Booth.
+
+### Things I learned about camera remote trigger jacks
+
+The camera I use for the Scream Booth is a Canon DSLR.
+
+![CannonPinout](./CanonPinout.png)
+
+The manufactured remote controls work by connecting the Half Press, or Full Press pins to the camera's ground pin.  I ordered an inexpensive remote trigger from Amazon and took it apart to confirm I understood the pinout and the behavior of the remote trigger cable.  Different camera manufacturers have different types of connectors to their remote trigger, but many followed the same approach: Connect pin to camera ground to trigger the camera shutter.
+
+### Things I learned about using a relay
+
+In this project, I used a relay to trigger the camera.  You could use a opto-isolator to replace the relay.  If you know more than I do about electronics (not hard, I'm only a hobbyist) then there may be other options to momentarily connect the two pins on the camera.  I'm not here to judge :)  The relay's coil is connected to 3.3v, and to an NPN transistor configured as a low side switch.  There's a pull down resistor on the transistor's gate pin.  The Trinket can trigger the transistor.  There's a flyback diode in parallel with the relay coil to keep the transistor safe.
+
+### Things I learned about using an Adafruit Trinket M0
+
+I used this micro controller because it's inexpensive, and because I have a couple on hand :) You can use a different micro controller, or you can skip the micro controller if you know how to build this sort of trigger without one.
+
+## PCB
+
+This was the first PCB I designed.  It actually took three tries to get a board that worked.  If you are using the same parts that I'm using, please feel free to use the Scream Booth Gerber Files.zip to order some PCBs of your own. :)
+
+## Final Disclaimer
+
+I'm not an electronics expert, I have a hobby level of understanding about electronics.  If you see a mistake, please let me know.  If you know how to modify something, or alter the parts, etc., please do.
