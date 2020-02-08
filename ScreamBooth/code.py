@@ -16,7 +16,7 @@ triggeredLed.value = False
 
 db_filter = False
 db_start_time = 0
-db_filter_time = .5
+db_filter_time = 1.0
 
 blink_led = False
 blink_start_time = 0
@@ -25,19 +25,11 @@ blink_interval = .1
 while True:
     print("soundVolume:", soundVolume.value, "triggerLevel:", triggerLevel.value, "db_filter:", db_filter)
 
-    # If the current sound level is greater than the trigger level, one of two
-    # things has occurred:
-    #
-    # 1) The deadband filter is running, and the audio is still too loud to
-    #    allow the scream booth to trigger again
-    #
-    # 2) The deadband filter is not running, and the scream booth should take a
-    #    picture.
+    # If the sound is greater than the trigger level, it's time to take a
+    # picture!  Unless the dead band filter is active... if it's active, don't
+    # take a picture. :)
     if soundVolume.value >= triggerLevel.value:
-        if db_filter:
-            # It's still too loud in the room, reset the timer.
-            db_start_time = time.monotonic()
-        else:
+        if not db_filter:
             # Take a picture!
             camera.value = True
             triggeredLed.value = True
@@ -49,11 +41,14 @@ while True:
             db_start_time = time.monotonic()
             db_filter = True
 
-    # If the deadband filter is active, there needs to be a way to exist the
+    # If the deadband filter is active, there needs to be a way to exit the
     # filter and start responding to sound again.  Check to see if enough time
     # has passed that we can turn off the deadband filter. 
     if db_filter:
+
         now = time.monotonic()
+
+        # Blink the led to let us know the deadband filter is active.
         if blink_led:
             if now - blink_start_time >= blink_interval:
                 blink_start_time = now
