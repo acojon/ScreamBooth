@@ -16,6 +16,10 @@ db_filter = False
 db_start_time = 0
 db_filter_time = .5
 
+blink_led = False
+blink_start_time = 0
+blink_interval = .1
+
 while True:
     print("soundVolume:", soundVolume.value, "triggerLevel:", triggerLevel.value, "db_filter:", db_filter)
 
@@ -27,17 +31,18 @@ while True:
             triggeredLed.value = True
             time.sleep(.5)
             camera.value = False
-            triggeredLed.value = False
+            blink_led = True
             db_start_time = time.monotonic()
             db_filter = True
 
     if db_filter:
-        print ("In db_filter")
         now = time.monotonic()
-        print ("now:", now)
-        print ("db_start_time:", db_start_time)
-        print (now - db_start_time)
+        if blink_led:
+            if now - blink_start_time >= blink_interval:
+                blink_start_time = now
+                triggeredLed.value = not triggeredLed.value
+
         if (now - db_start_time) >= db_filter_time:
             db_filter = False
-
-    # time.sleep(0.1)
+            triggeredLed.value = False
+            blink_led = False
