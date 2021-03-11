@@ -4,6 +4,8 @@
         "PCBs",
         "Pinout",
         "Youtube",
+        "analogio",
+        "digitalio",
         "flyback",
         "opto"
     ]
