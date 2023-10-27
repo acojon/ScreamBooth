@@ -48,7 +48,7 @@ void loop() {
     else {
       digitalWrite(cameraPin, HIGH);
       digitalWrite(ledPin, HIGH);
-      delay(500);
+      delay(300);
       digitalWrite(cameraPin, LOW);
       digitalWrite(ledPin, LOW);
       delay(100);

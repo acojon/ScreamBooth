@@ -33,7 +33,7 @@ while True:
             # Take a picture!
             camera.value = True
             triggeredLed.value = True
-            time.sleep(.5)
+            time.sleep(.25)
             camera.value = False
 
             # Turn on the dead band filtering.
