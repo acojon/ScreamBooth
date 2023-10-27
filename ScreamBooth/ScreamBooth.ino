@@ -18,6 +18,10 @@ int sensorPin = A0;
 
 int soundVolume = 0;
 int triggerLevel = 0;
+unsigned startTime = 0;
+bool dbFilter = false;
+unsigned dbFilterTime = 500;
+unsigned now = 0;
 
 void setup() {
   // put your setup code here, to run once:
@@ -36,14 +40,28 @@ void loop() {
   Serial.print(soundVolume);
   Serial.print("\t");
   Serial.println(triggerLevel);
-  if (soundVolume > triggerLevel)
-  {
-    digitalWrite(cameraPin, HIGH);
-    digitalWrite(ledPin, HIGH);
-    delay(500);
-    digitalWrite(cameraPin, LOW);
-    digitalWrite(ledPin, LOW);
-    delay(100);
+  
+  if (soundVolume > triggerLevel) {
+    if (dbFilter) {
+      startTime = millis();
+    }
+    else {
+      digitalWrite(cameraPin, HIGH);
+      digitalWrite(ledPin, HIGH);
+      delay(500);
+      digitalWrite(cameraPin, LOW);
+      digitalWrite(ledPin, LOW);
+      delay(100);
+      startTime = millis();
+      dbFilter = true;
+    }
   }
-  //  delay(5);
+
+  if (dbFilter) {
+    now = millis();
+    unsigned elapsedTime = now - startTime;
+    if (elapsedTime >= dbFilterTime) {
+      dbFilter = false;
+    }
+  }
 }
